@@ -88,52 +88,116 @@ namespace CeaserCypher
         public static char DecryptCharacter(String charSet, char ch, int key)
         {
             // Hrm.....
-            return '&';
+            if (charSet.IndexOf(ch) >= 0)
+            {
+                // Get the position of the character ch in the alphabet.
+                int charNumber = charSet.IndexOf(ch);
+
+                // add the key to the char number (this is the Ceaser Cipher step!)
+                // the % 26 wraps around the alphabet so 'x' + 5 => 'c'
+                int decryptedCharNumber = (charNumber - key) % charSet.Length;
+
+                if (decryptedCharNumber < 0) { decryptedCharNumber += 22; }
+
+                // get the character associated with the encrypted character number in the lowercase alphabet.
+                char decryptedChar = charSet[decryptedCharNumber];
+
+                // stick that encrypted character on the end of the encryptedMessage.
+                return decryptedChar;
+            }
+            else
+            {
+                // ignore it if they character is not a part of the given character set
+                return ch;
+            }
         }
 
         public static void Main(string[] args)
         {
-            // Get a secret message from the user.
-            Console.WriteLine ("Enter a message to encrypt:");
-            String message = Console.ReadLine();
-
-            // Get the KEY with which to encrypt this secret message.  This must be an INTEGER.
-            Console.Write("Enter the KEY to encrypt this message with >> ");
-            int key = Convert.ToInt32(Console.ReadLine());
-
-            // Make a place to store the encrypted message while I'm working on building it.
-            String encryptedMessage = "";
-            
-            // Iterate through the message that the user typed one character at a time.
-            foreach (char ch in message.ToCharArray())
+            String decryptedMessage = "";
+            Console.WriteLine("Would you like to decrypt or encrypt a message? d or e");
+            char decrypt = Console.ReadKey().KeyChar;
+            if(decrypt == 'd')
             {
-                // if this is a lowercase letter, encrypt the character using the lowercase alphabet string.
-                // IndexOf returns -1 if the character does not appear in the string!
-                if (alphabet.IndexOf(ch) >= 0)
-                {
+                Console.WriteLine("\nEnter a Message: ");
+                string eMessage = Console.ReadLine();
 
-                    // stick that encrypted character on the end of the encryptedMessage.
-                    encryptedMessage += EncryptCharacter(alphabet, ch, key);
+                Console.WriteLine("\nEnter the key to decrypt");
+                int eKey = Convert.ToInt16(Console.ReadKey().KeyChar);
+
+                foreach (char ch in eMessage.ToCharArray())
+                {
+                    // if this is a lowercase letter, encrypt the character using the lowercase alphabet string.
+                    // IndexOf returns -1 if the character does not appear in the string!
+                    if (alphabet.IndexOf(ch) >= 0)
+                    {
+
+                        // stick that encrypted character on the end of the encryptedMessage.
+                        decryptedMessage += DecryptCharacter(alphabet, ch, eKey);
+                    }
+
+                    // Do the same thing, if the character is a Capital letter.
+                    else if (ALPHABET.IndexOf(ch) >= 0)
+                    {
+                        decryptedMessage += DecryptCharacter(ALPHABET, ch, eKey);
+                    }
+
+                    // If the character is neither a capital nor lowercase, then ignore it and don't try to encrypt.
+                    else
+                    {
+                        decryptedMessage += ch;
+                    }
                 }
 
-                // Do the same thing, if the character is a Capital letter.
-                else if (ALPHABET.IndexOf(ch) >= 0)
+                Console.WriteLine("\n______________________________________________");
+                Console.WriteLine("Your decrypted message is:\n\n{0}", decryptedMessage);
+                Console.ReadKey();
+            }
+            else
+            {
+                // Get a secret message from the user.
+                Console.WriteLine("Enter a message to encrypt:");
+                String message = Console.ReadLine();
+
+                // Get the KEY with which to encrypt this secret message.  This must be an INTEGER.
+                Console.Write("Enter the KEY to encrypt this message with >> ");
+                int key = Convert.ToInt32(Console.ReadLine());
+
+                // Make a place to store the encrypted message while I'm working on building it.
+                String encryptedMessage = "";
+
+                // Iterate through the message that the user typed one character at a time.
+                foreach (char ch in message.ToCharArray())
                 {
-                    encryptedMessage += EncryptCharacter(ALPHABET, ch, key);
+                    // if this is a lowercase letter, encrypt the character using the lowercase alphabet string.
+                    // IndexOf returns -1 if the character does not appear in the string!
+                    if (alphabet.IndexOf(ch) >= 0)
+                    {
+
+                        // stick that encrypted character on the end of the encryptedMessage.
+                        encryptedMessage += EncryptCharacter(alphabet, ch, key);
+                    }
+
+                    // Do the same thing, if the character is a Capital letter.
+                    else if (ALPHABET.IndexOf(ch) >= 0)
+                    {
+                        encryptedMessage += EncryptCharacter(ALPHABET, ch, key);
+                    }
+
+                    // If the character is neither a capital nor lowercase, then ignore it and don't try to encrypt.
+                    else
+                    {
+                        encryptedMessage += ch;
+                    }
                 }
 
-                // If the character is neither a capital nor lowercase, then ignore it and don't try to encrypt.
-                else
-                {
-                    encryptedMessage += ch;
-                }
+
+                // Print the encrypted message!
+                Console.WriteLine("_________________________________________________");
+                Console.WriteLine("Your encrypted message is:\n\n{0}", encryptedMessage);
+                Console.ReadKey();
             }
 
-
-            // Print the encrypted message!
-            Console.WriteLine("_________________________________________________");
-            Console.WriteLine("Your encrypted message is:\n\n{0}", encryptedMessage);
-            Console.ReadKey();
         }
     }
 }
